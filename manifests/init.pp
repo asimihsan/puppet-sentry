@@ -15,11 +15,13 @@ class sentry ($path, $host_name, $db_name, $db_username, $db_password) {
 		"update_apt":
 			command => "/usr/bin/apt-get update";
 		"create_db":
-			command => "/usr/bin/psql -c \"CREATE USER $db_username WITH PASSWORD '$db_password'\" && /usr/bin/psql -c \"CREATE DATABASE $db_name\" && /usr/bin/psql -c \"GRANT ALL PRIVILEGES ON DATABASE $db_name TO $db_username\"",
+			command => "/usr/bin/psql -c \"CREATE USER $db_username WITH PASSWORD '$db_password'\" && /usr/bin/psql -c \"CREATE DATABASE $db_name\" && /usr/bin/psql -c \"GRANT ALL PRIVILEGES ON DATABASE $db_name TO $db_username\" && touch $path/db.created",
 			user => "postgres",
+			creates => "$path/db.created",
 			require => [Exec["pip_install"], Package["postgresql"]];
 		"create_path": 
-			command => "/bin/mkdir -p $path";
+			command => "/bin/mkdir -p $path",
+			creates => "$path";
 		"ve_init":
 			command => "/usr/bin/virtualenv $ve_path",
 			unless => "/usr/bin/test -d $ve_path",
