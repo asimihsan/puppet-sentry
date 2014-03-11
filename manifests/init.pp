@@ -2,7 +2,6 @@ class sentry ($path, $host_name, $db_name, $db_username, $db_password) {
 	$ve_path = "$path/ve"
 	package { [
 		"libpq-dev",
-		"nginx",
 		"postgresql",
 		"python-dev",
 		"python-virtualenv",
@@ -19,7 +18,7 @@ class sentry ($path, $host_name, $db_name, $db_username, $db_password) {
 			user => "postgres",
 			creates => "$path/db.created",
 			require => [Exec["pip_install"], Package["postgresql"]];
-		"create_path": 
+		"create_path":
 			command => "/bin/mkdir -p $path",
 			creates => "$path";
 		"ve_init":
@@ -31,7 +30,7 @@ class sentry ($path, $host_name, $db_name, $db_username, $db_password) {
 			cwd => "$path",
 			require => [Exec["ve_init"], File["requirements"], Package["libpq-dev", "postgresql", "python-dev"]];
 	}
-	file { 
+	file {
 		"requirements":
 			path => "$path/requirements.pip",
 			ensure => file,
